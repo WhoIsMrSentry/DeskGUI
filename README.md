@@ -1,513 +1,538 @@
 # DeskGUI
 
-[English](README.md) | [Türkçe](README.tr.md) 
+SentryBOT robot platformu için geliştirilmiş, PyQt5 tabanlı masaüstü kontrol ve izleme arayüzüdür. Gerçek zamanlı video akışı, sesli komutlar, yüz ve nesne tanıma, robot durum takibi ve LLM (büyük dil modeli) entegrasyonları ile robotunuzu kolayca yönetmenizi sağlar.
 
----
+## Özellikler
 
-A PyQt5-based desktop control and monitoring interface developed for the SentryBOT robot platform. It allows you to easily manage your robot with real-time video streaming, voice commands, face and object recognition, robot status tracking, and LLM (Large Language Model) integrations.
+- **Gerçek Zamanlı Video Akışı:** Robotun kamerasından canlı görüntü izleyin.
+- **Sesli Komut ve TTS:** Mikrofon ile komut verin, robotun yanıtlarını sesli dinleyin.
+- **Yüz ve Nesne Tanıma:** Gelişmiş görüntü işleme modülleri ile yüz, nesne, yaş ve duygu tespiti.
+- **Bluetooth Ses Sunucusu:** Robotun ses giriş/çıkışını bilgisayarınız üzerinden yönetin.
+- **Robot Durum Takibi:** Bağlantı, göz rengi, kişilik gibi robot durumlarını anlık izleyin.
+- **LLM ve Gemini Entegrasyonu:** Ollama ve Gemini gibi büyük dil modelleriyle sohbet ve komut desteği.
+- **Tema Desteği:** Koyu, açık ve kırmızı temalar arasında geçiş yapabilme.
+- **Gelişmiş Loglama ve Hata Yönetimi:** Tüm olaylar ve hatalar için detaylı log paneli.
+- **Dil Desteği:** Çoklu dil desteği ve otomatik dil tanıma özelliği.
+- **El ve Parmak Hareketleri Tanıma:** Kamera üzerinden el hareketleri ile robot kontrolü.
+- **Animasyon Kontrolü:** Robot üzerindeki LED ve servo animasyonlarını yönetme.
+- **Yaş ve Duygu Tespiti:** Yüz görüntüsünden yaklaşık yaş ve duygusal ifade tespiti.
 
-## Features
+## Kurulum
 
--   **Real-Time Video Stream:** Watch live video feed from the robot's camera.
--   **Voice Command and TTS:** Give commands via microphone, listen to the robot's responses audibly.
--   **Face and Object Recognition:** Advanced image processing modules for face, object, age, and emotion detection.
--   **Bluetooth Audio Server:** Manage the robot's audio input/output through your computer.
--   **Robot Status Tracking:** Monitor robot status in real-time, including connection, eye color, personality, etc.
--   **LLM and Gemini Integration:** Chat and command support with large language models like Ollama and Gemini.
--   **Theme Support:** Ability to switch between dark, light, and red themes.
--   **Advanced Logging and Error Handling:** Detailed log panel for all events and errors.
--   **Multilingual Support:** Multiple language support and automatic language detection feature.
--   **Hand and Finger Gesture Recognition:** Control the robot via hand gestures using the camera.
--   **Animation Control:** Manage LED and servo animations on the robot.
--   **Age and Emotion Detection:** Approximate age and emotional expression detection from face images.
+### Sistem Gereksinimleri
 
-## Installation
+- **İşletim Sistemi:** Windows 10/11, Ubuntu 20.04+ veya macOS 10.15+
+- **Python:** 3.8 veya üzeri (3.10 önerilen)
+- **Mikrofon:** STT için çalışır durumda bir mikrofon
+- **Hoparlörler:** TTS çıktısı için ses sistemi
+- **Kamera:** (Opsiyonel) Test için yerel kamera
+- **GPU:** (Opsiyonel) Görüntü işleme işlevleri için NVIDIA GPU önerilir
 
-### System Requirements
+### Kurulum Adımları
 
--   **Operating System:** Windows 10/11, Ubuntu 20.04+, or macOS 10.15+
--   **Python:** 3.8 or higher (3.10 recommended)
--   **Microphone:** A working microphone for STT
--   **Speakers:** Audio system for TTS output
--   **Camera:** (Optional) Local camera for testing
--   **GPU:** (Optional) NVIDIA GPU recommended for image processing functions
+1. Proje dosyalarını indirin ve gerekli Python paketlerini yükleyin:
+   ```powershell
+   # Python sanal ortam oluşturmak (tavsiye edilir)
+   python -m venv venv
+   .\venv\Scripts\activate
 
-### Installation Steps
+   # Gerekli paketleri yükle
+   pip install -r requirements.txt
+   
+   # Görüntü işleme modülleri için ekstra paketler (opsiyonel)
+   pip install mediapipe cvzone tensorflow
+   ```
 
-1.  Download the project files and install the necessary Python packages:
-    ```powershell
-    # Create a Python virtual environment (recommended)
-    python -m venv venv
-    .\venv\Scripts\activate
+2. Görüntü İşleme modelleri için gereken dosyaları yerleştirin:
+   - `encodings.pickle`: Yüz tanıma modeli dosyası (örnek dosya pakette mevcuttur)
+   - `haarcascade_frontalface_default.xml`: Yüz tespiti için OpenCV modeli
+   - `hey_sen_tree_bot.onnx`: Wake word algılama modeli
+   - Ayrıca `modules/vision/__init__.py` dosyasında `MODELS_DIR` değişkenini güncelleyin:
+     ```python
+     MODELS_DIR = r"C:\path\to\your\models" # Kendi modellerinizin konumuna göre değiştirin
+     ```
 
-    # Install required packages
-    pip install -r requirements.txt
+3. GUI'yi başlatmak için:
+   ```powershell
+   python run_gui.py --robot-ip <ROBOT_IP_ADRESI>
+   ```
+   veya hem GUI hem ses sunucusunu birlikte başlatmak için:
+   ```powershell
+   python run_all.py
+   ```
 
-    # Additional packages for image processing modules (optional)
-    pip install mediapipe cvzone tensorflow
-    ```
+## Komut Satırı Argümanları
 
-2.  Place the required files for Image Processing models:
-    -   `encodings.pickle`: Face recognition model file (example file included in the package)
-    -   `haarcascade_frontalface_default.xml`: OpenCV model for face detection
-    -   `hey_sen_tree_bot.onnx`: Wake word detection model
-    -   Also, update the `MODELS_DIR` variable in `modules/vision/__init__.py`:
-        ```python
-        MODELS_DIR = r"C:\path\to\your\models" # Change according to the location of your models
-        ```
+### run_gui.py için Argümanlar
 
-3.  To launch the GUI:
-    ```powershell
-    python run_gui.py --robot-ip <ROBOT_IP_ADDRESS>
-    ```
-    or to launch both the GUI and the audio server together:
-    ```powershell
-    python run_all.py
-    ```
+- `--robot-ip` - Robotun IP adresi (varsayılan: 192.168.137.52)
+- `--video-port` - Video akış portu (varsayılan: 8000)
+- `--command-port` - Komut portu (varsayılan: 8090)
+- `--ollama-url` - Ollama API URL (varsayılan: http://localhost:11435)
+- `--ollama-model` - Kullanılacak Ollama modeli (varsayılan: SentryBOT:4b)
+- `--encodings-file` - Yüz tanıma modeli dosyası (varsayılan: encodings.pickle)
+- `--bluetooth-server` - Bluetooth ses sunucusu IP adresi (varsayılan: 192.168.1.100)
+- `--enable-fastapi` - FastAPI desteğini etkinleştir
+- `--retry-on-error` - Hata durumunda otomatik yeniden başlatma
+- `--log-file` - Log dosyası (varsayılan: sentry_gui.log)
+- `--debug` - Hata ayıklama bilgilerini göster
 
-## Command Line Arguments
+### run_audio_server.py için Argümanlar
 
-### Arguments for run_gui.py
+- `--host` - Sunucunun bağlanacağı host (varsayılan: 0.0.0.0)
+- `--tts-port` - TTS hizmeti için port (varsayılan: 8095)
+- `--speech-port` - Konuşma tanıma hizmeti için port (varsayılan: 8096)
+- `--fastapi-port` - FastAPI WebSocket sunucusu için port (varsayılan: 8098)
+- `--use-fastapi` - Performans için FastAPI kullan
+- `--device-name` - Mikrofon cihaz adı
+- `--device-index` - Mikrofon cihaz indeksi (cihaz adına alternatif)
+- `--list-devices` - Mevcut mikrofon cihazlarını listele
+- `--voice-idx` - TTS için ses indeksi (varsayılan: 0)
+- `--auto-start-speech` - Başlangıçta konuşma tanımayı otomatik başlat
+- `--language` - Konuşma tanıma dili (örn: en-US, tr-TR)
+- `--test-audio` - Başlangıçta ses çıkışını test et
+- `--verbose` - Detaylı loglama
 
--   `--robot-ip` - Robot's IP address (default: 192.168.137.52)
--   `--video-port` - Video stream port (default: 8000)
--   `--command-port` - Command port (default: 8090)
--   `--ollama-url` - Ollama API URL (default: http://localhost:11434)
--   `--ollama-model` - Ollama model to use (default: SentryBOT:4b)
--   `--encodings-file` - Face recognition model file (default: encodings.pickle)
--   `--bluetooth-server` - Bluetooth audio server IP address (default: 192.168.1.100)
--   `--enable-fastapi` - Enable FastAPI support
--   `--retry-on-error` - Automatically restart on error
--   `--log-file` - Log file (default: sentry_gui.log)
--   `--debug` - Show debug information
+### run_all.py için Argümanlar
 
-### Arguments for run_audio_server.py
+- `--robot-ip` - Robotun IP adresi
+- `--video-port` - Video akış portu
+- `--command-port` - Komut portu
+- `--ollama-url` - Ollama API URL (varsayılan port 11435)
+- `--encodings-file` - Yüz tanıma modeli dosyası
+- `--debug` - Hata ayıklama bilgilerini göster
+- `--theme` - Uygulama teması (light, dark, auto seçenekleri)
+- `--xtts` - XTTS API sunucusunu ayrı terminalde başlat (Windows)
 
--   `--host` - Host the server will bind to (default: 0.0.0.0)
--   `--tts-port` - Port for TTS service (default: 8095)
--   `--speech-port` - Port for speech recognition service (default: 8096)
--   `--fastapi-port` - Port for FastAPI WebSocket server (default: 8098)
--   `--use-fastapi` - Use FastAPI for performance
--   `--device-name` - Microphone device name
--   `--device-index` - Microphone device index (alternative to device name)
--   `--list-devices` - List available microphone devices
--   `--voice-idx` - Voice index for TTS (default: 0)
--   `--auto-start-speech` - Automatically start speech recognition on startup
--   `--language` - Speech recognition language (e.g., en-US, tr-TR)
--   `--test-audio` - Test audio output on startup
--   `--verbose` - Detailed logging
+## TTS (Text-to-Speech) Yapılandırması
 
-### Arguments for run_all.py
+### Piper TTS Kurulumu
 
--   `--robot-ip` - Robot's IP address
--   `--video-port` - Video stream port
--   `--command-port` - Command port
--   `--ollama-url` - Ollama API URL
--   `--encodings-file` - Face recognition model file
--   `--debug` - Show debug information
--   `--theme` - Application theme (options: light, dark, auto)
--   `--xtts` - Launch XTTS API server in a separate terminal (Windows)
+1. [Piper TTS](https://github.com/rhasspy/piper)'ı indirin (Windows, Linux, MacOS):
+   
+   ```powershell
+   # Windows için örnek kurulum
+   mkdir C:\Users\<KULLANICI>\piper
+   cd C:\Users\<KULLANICI>\piper
+   
+   # İndirme bağlantısı (Windows için)
+   $url = "https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_windows_amd64.zip"
+   Invoke-WebRequest -Uri $url -OutFile "piper.zip"
+   Expand-Archive -Path "piper.zip" -DestinationPath "."
+   ```
 
-## TTS (Text-to-Speech) Configuration
+2. İhtiyacınız olan dil modellerini indirin:
 
-### Piper TTS Setup
+   ```powershell
+   # Türkçe model için örnek
+   mkdir C:\Users\<KULLANICI>\piper\tr-TR
+   cd C:\Users\<KULLANICI>\piper\tr-TR
+   
+   # Türkçe model indirme
+   $model_url = "https://huggingface.co/rhasspy/piper-voices/resolve/main/tr/tr_TR/sinem/medium/tr_TR-sinem-medium.onnx"
+   $json_url = "https://huggingface.co/rhasspy/piper-voices/resolve/main/tr/tr_TR/sinem/medium/tr_TR-sinem-medium.onnx.json"
+   
+   Invoke-WebRequest -Uri $model_url -OutFile "tr_TR-sinem-medium.onnx"
+   Invoke-WebRequest -Uri $json_url -OutFile "tr_TR-sinem-medium.onnx.json"
+   ```
 
-1.  Download [Piper TTS](https://github.com/rhasspy/piper) (Windows, Linux, MacOS):
+3. Ses modellerini aşağıdaki dizin yapısına yerleştirin:
+   - Windows: `C:\Users\<KULLANICI>\piper\<DIL_KODU>\<MODEL>.onnx`
+   - Linux: `~/piper/<DIL_KODU>/<MODEL>.onnx`
+   
+4. Test edin (Opsiyonel):
+   ```powershell
+   cd C:\Users\<KULLANICI>\piper
+   .\piper.exe --model .\tr-TR\tr_TR-sinem-medium.onnx --output_file test.wav --text "Merhaba, ben bir robot sesiyim."
+   ```
 
-    ```powershell
-    # Example installation for Windows
-    mkdir C:\Users\<USER>\piper
-    cd C:\Users\<USER>\piper
+5. GUI içinde TTS hizmetini "piper" olarak ayarlayın. DeskGUI otomatik olarak modellerinizi bulacaktır.
 
-    # Download link (for Windows)
-    $url = "https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_windows_amd64.zip"
-    Invoke-WebRequest -Uri $url -OutFile "piper.zip"
-    Expand-Archive -Path "piper.zip" -DestinationPath "."
-    ```
+### XTTS (XTalker TTS) Kurulumu
 
-2.  Download the language models you need:
+1. XTTS için sanal ortam oluşturun:
 
-    ```powershell
-    # Example for Turkish model
-    mkdir C:\Users\<USER>\piper\tr-TR
-    cd C:\Users\<USER>\piper\tr-TR
+   ```powershell
+   # Sanal ortam için dizin oluştur
+   mkdir C:\Users\<KULLANICI>\xTTS
+   cd C:\Users\<KULLANICI>\xTTS
+   
+   # Python sanal ortam oluştur ve etkinleştir
+   python -m venv tts_env
+   .\tts_env\Scripts\Activate.ps1
+   
+   # Gerekli paketleri kur
+   pip install TTS uvicorn fastapi python-multipart
+   ```
 
-    # Turkish model download
-    $model_url = "https://huggingface.co/rhasspy/piper-voices/resolve/main/tr/tr_TR/sinem/medium/tr_TR-sinem-medium.onnx"
-    $json_url = "https://huggingface.co/rhasspy/piper-voices/resolve/main/tr/tr_TR/sinem/medium/tr_TR-sinem-medium.onnx.json"
+2. XTTS API sunucusu için aşağıdaki içerikle `xtts.py` dosyası oluşturun:
 
-    Invoke-WebRequest -Uri $model_url -OutFile "tr_TR-sinem-medium.onnx"
-    Invoke-WebRequest -Uri $json_url -OutFile "tr_TR-sinem-medium.onnx.json"
-    ```
+   ```python
+   from fastapi import FastAPI, File, UploadFile, Form
+   from fastapi.responses import FileResponse
+   from fastapi.middleware.cors import CORSMiddleware
+   import os
+   import tempfile
+   import uvicorn
+   from TTS.api import TTS
+   
+   app = FastAPI()
+   
+   app.add_middleware(
+       CORSMiddleware,
+       allow_origins=["*"],
+       allow_credentials=True,
+       allow_methods=["*"],
+       allow_headers=["*"],
+   )
+   
+   # Initialize TTS
+   tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
+   
+   @app.post("/synthesize")
+   async def synthesize_speech(
+       text: str = Form(...),
+       speaker_wav: UploadFile = File(...),
+       language: str = Form("tr")
+   ):
+       print(f"Generating speech for: {text[:50]}... in {language}")
+       
+       # Save the uploaded speaker file
+       temp_dir = tempfile.gettempdir()
+       speaker_path = os.path.join(temp_dir, "speaker.wav")
+       with open(speaker_path, "wb") as f:
+           f.write(await speaker_wav.read())
+       
+       # Generate output path
+       output_path = os.path.join(temp_dir, "output.wav")
+       
+       # Generate speech
+       tts.tts_to_file(text=text, 
+                       file_path=output_path,
+                       speaker_wav=speaker_path, 
+                       language=language)
+       
+       return FileResponse(output_path, media_type="audio/wav")
+   
+   if __name__ == "__main__":
+       uvicorn.run(app, host="0.0.0.0", port=5002)
+   ```
 
-3.  Place the voice models in the following directory structure:
-    -   Windows: `C:\Users\<USER>\piper\<LANGUAGE_CODE>\<MODEL>.onnx`
-    -   Linux: `~/piper/<LANGUAGE_CODE>/<MODEL>.onnx`
+3. API sunucusunu başlatmak için `start_xtts_api.bat` dosyası (veya `run_all.py` ile `--xtts` parametresi):
 
-4.  Test (Optional):
-    ```powershell
-    cd C:\Users\<USER>\piper
-    .\piper.exe --model .\tr-TR\tr_TR-sinem-medium.onnx --output_file test.wav --text "Merhaba, ben bir robot sesiyim."
-    ```
+   ```batch
+   @echo off
+   echo XTTS API Sunucusu baslatiliyor...
+   
+   REM Sanal ortami aktif et
+   call "C:\Users\<KULLANICI>\xTTS\tts_env\Scripts\activate.bat"
+   
+   echo Sanal ortam (tts_env) aktif.
+   
+   REM Uvicorn'u calistir
+   echo Uvicorn sunucusu baslatiliyor (0.0.0.0:5002)...
+   C:\Users\<KULLANICI>\xTTS\tts_env\Scripts\python.exe -m uvicorn xtts:app --reload --host 0.0.0.0 --port 5002
+   
+   echo Sunucu durduruldu.
+   pause
+   ```
 
-5.  Set the TTS service to "piper" within the GUI. DeskGUI will automatically find your models.
+4. Ses örneği için bir WAV dosyası hazırlayın (16kHz, mono, WAV formatında olmalı)
+5. GUI içinde TTS hizmetini "xtts" olarak ayarlayın
+6. Referans ses dosyası yolunu ayarlarda belirtin
 
-### XTTS (XTalker TTS) Setup
+### Diğer TTS Seçenekleri
 
-1.  Create a virtual environment for XTTS:
+- **pyttsx3** - Yerel TTS motoru, ek kurulum gerektirmez
+- **gtts** - Google'ın TTS hizmeti (internet bağlantısı gerektirir)
+- **espeak** - Hafif TTS motoru (önceden kurulmalıdır)
 
-    ```powershell
-    # Create directory for virtual environment
-    mkdir C:\Users\<USER>\xTTS
-    cd C:\Users\<USER>\xTTS
+## Kullanım
 
-    # Create and activate Python virtual environment
-    python -m venv tts_env
-    .\tts_env\Scripts\Activate.ps1
+- Robotun IP adresini ve portlarını komut satırı argümanları ile belirtebilirsiniz.
+- GUI üzerinden video, ses, animasyon ve komut kontrollerini kolayca gerçekleştirebilirsiniz.
+- Gelişmiş ayarlar ve LLM/Gemini API anahtarlarını GUI içinden yapılandırabilirsiniz.
 
-    # Install required packages
-    pip install TTS uvicorn fastapi python-multipart
-    ```
+## Bağımlılıklar
 
-2.  Create a `1.py` file with the following content for the XTTS API server:
+- Python 3.8+
+- PyQt5
+- OpenCV
 
-    ```python
-    from fastapi import FastAPI, File, UploadFile, Form
-    from fastapi.responses import FileResponse
-    from fastapi.middleware.cors import CORSMiddleware
-    import os
-    import tempfile
-    import uvicorn
-    from TTS.api import TTS
+## Sorun Giderme
 
-    app = FastAPI()
+### Ollama 404 ( /api\\generate ) Hatası
+Windows ortamında bazı sürümlerde `os.path.join` kullanımı URL parçalarını birleştirirken ters slash (\\) ekleyerek `http://localhost:11435/api\generate` gibi hatalı bir yol oluşturabilir ve Ollama sunucusu 404 döndürür.
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+Çözüm:
+1. GUI içinde Ollama URL alanına `http://localhost:11435` veya `http://localhost:11435/api` yazın (sonunda ters slash yok).
+2. Loglarda `api\generate` görüyorsanız güncel koddaki düzeltmenin çekildiğinden emin olun (URL birleştirme artık düz string ekleme ile yapılıyor).
+3. Manuel test: PowerShell'de
+   ```powershell
+   Invoke-RestMethod -Method Post -Uri http://localhost:11435/api/generate -Body (@{model='SentryBOT:4b'; prompt='test'; stream=$false} | ConvertTo-Json) -ContentType 'application/json'
+   ```
+   Yanıt JSON dönmeli; dönmüyorsa Ollama servisinin çalıştığını doğrulayın: `ollama list`.
 
-    # Initialize TTS
-    tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
+### NumPy / onnxruntime DLL Hataları
+`ImportError: DLL load failed while importing _framework_bindings` veya `_ARRAY_API` hataları alıyorsanız büyük olasılıkla NumPy 2.x ile eski onnxruntime sürümü uyumsuzdur.
 
-    @app.post("/synthesize")
-    async def synthesize_speech(
-        text: str = Form(...),
-        speaker_wav: UploadFile = File(...),
-        language: str = Form("en") # Changed default to 'en' but 'tr' is also supported by XTTSv2
-    ):
-        print(f"Generating speech for: {text[:50]}... in {language}")
+Çözüm:
+1. `pip install 'numpy<2' --upgrade --force-reinstall`
+2. Gerekirse `pip install --upgrade onnxruntime` (veya GPU için `onnxruntime-gpu`).
+3. `python debug_imports.py` çalıştırarak ayrıntılı tanılama alın; script uyumsuzlukları raporlar.
 
-        # Save the uploaded speaker file
-        temp_dir = tempfile.gettempdir()
-        speaker_path = os.path.join(temp_dir, "speaker.wav")
-        with open(speaker_path, "wb") as f:
-            f.write(await speaker_wav.read())
+### Boş / Çok Uzun LLM Yanıtları
+Yanıt boşsa model ilk prompt'u yüklerken zaman aşımı olmuş olabilir. Timeout değerini ayarlardan yükseltin. Çok uzun yanıtlar otomatik kısaltılır; ihtiyacınıza göre limitleri `desk_gui_app.py` içinde arayın: `resp_length` ve `output` kesme noktaları.
 
-        # Generate output path
-        output_path = os.path.join(temp_dir, "output.wav")
+### Çeviri Modülü Yok / Hata
+Çeviri devre dışıysa giriş metni çevrilmeden Ollama'ya gönderilir. `modules/translate_helper.py` mevcut ve `googletrans` (veya kullanılan kütüphane) kurulu olduğundan emin olun.
 
-        # Generate speech
-        tts.tts_to_file(text=text,
-                        file_path=output_path,
-                        speaker_wav=speaker_path,
-                        language=language)
+- face_recognition
+- numpy
+- sounddevice, pyaudio, pyttsx3, gtts
+- requests, pubsub, langdetect, pygame, onnxruntime
+- (ve diğerleri, detay için requirements.txt)
 
-        return FileResponse(output_path, media_type="audio/wav")
-
-    if __name__ == "__main__":
-        uvicorn.run(app, host="0.0.0.0", port=5002)
-    ```
-
-3.  Create `start_xtts_api.bat` file (or use the `--xtts` parameter with `run_all.py`) to start the API server:
-
-    ```batch
-    @echo off
-    echo Starting XTTS API Server...
-
-    REM Activate virtual environment
-    call "C:\Users\<USER>\xTTS\tts_env\Scripts\activate.bat"
-
-    echo Virtual environment (tts_env) activated.
-
-    REM Run Uvicorn
-    echo Starting Uvicorn server (0.0.0.0:5002)...
-    C:\Users\<USER>\xTTS\tts_env\Scripts\python.exe -m uvicorn 1:app --reload --host 0.0.0.0 --port 5002
-
-    echo Server stopped.
-    pause
-    ```
-
-4.  Prepare a WAV file for the voice sample (must be 16kHz, mono, WAV format).
-5.  Set the TTS service to "xtts" within the GUI.
-6.  Specify the path to the reference voice file in the settings.
-
-### Other TTS Options
-
--   **pyttsx3** - Local TTS engine, requires no extra setup.
--   **gtts** - Google's TTS service (requires internet connection).
--   **espeak** - Lightweight TTS engine (must be pre-installed).
-
-## Usage
-
--   You can specify the robot's IP address and ports using command-line arguments.
--   Easily control video, audio, animations, and commands through the GUI.
--   Configure advanced settings and LLM/Gemini API keys within the GUI.
-
-## Dependencies
-
--   Python 3.8+
--   PyQt5
--   OpenCV
--   face_recognition
--   numpy
--   sounddevice, pyaudio, pyttsx3, gtts
--   requests, pubsub, langdetect, pygame, onnxruntime
--   (and others, see requirements.txt for details)
-
-### Recommended Packages (optional)
+### Önerilen Paketler (isteğe bağlı)
 
 ```powershell
 pip install PyQt5 opencv-python-headless face_recognition numpy sounddevice pyaudio pyttsx3 gtts requests pubsub pygame onnxruntime pydub langdetect fastapi uvicorn
 ```
 
-For advanced face and object recognition features:
+Gelişmiş yüz ve nesne tanıma özellikleri için:
 ```powershell
 pip install mediapipe cvzone tensorflow keras
 ```
 
-## File Structure
+## Dosya Yapısı
 
--   `desk_gui.py`, `run_gui.py`, `run_all.py`: Main launchers and GUI files.
--   `modules/`: Audio, vision, command, robot data listener, and helper modules.
--   `modules/gui/desk_gui_app.py`: Central file for all GUI and functionalities.
--   `modules/vision/`: Image processing (face, object, finger, age-emotion detection).
--   `encodings.pickle`, `haarcascade_frontalface_default.xml`: Model and helper files.
+- `desk_gui.py`, `run_gui.py`, `run_all.py`: Ana başlatıcı ve GUI dosyaları
+- `modules/`: Ses, görüntü işleme, komut, robot veri dinleyici ve yardımcı modüller
+- `modules/gui/desk_gui_app.py`: Tüm GUI ve işlevselliklerin merkezi
+- `modules/vision/`: Görüntü işleme (yüz, nesne, parmak, yaş-duygu tespiti)
+- `encodings.pickle`, `haarcascade_frontalface_default.xml`: Model ve yardımcı dosyalar
 
-## Modules and Components
+## Modüller ve Bileşenler
 
-DeskGUI has a modular structure consisting of numerous modules. Here are descriptions of the main modules:
+DeskGUI çok sayıda modülden oluşan modüler bir yapıya sahiptir. İşte ana modüllerin açıklamaları:
 
-### Core Modules
+### Ana Modüller
 
--   **desk_gui_app.py**: The main GUI application, containing all interface and controls.
--   **audio_manager.py**: Manages audio input/output operations and devices.
--   **audio_thread_manager.py**: Provides multi-thread management for audio processing.
--   **command_sender.py**: Uses TCP protocol to send commands to the robot.
--   **command_helpers.py**: Helper functions for command creation and processing.
--   **face_detector.py**: Performs face detection and recognition.
--   **gemini_helper.py**: Provides integration with Google Gemini AI API.
--   **motion_detector.py**: Detects motion in the camera feed.
--   **remote_video_stream.py**: Receives and processes video stream from the robot.
--   **robot_data_listener.py**: Listens for and processes robot status messages.
--   **speech_input.py**: Manages speech recognition and audio input operations.
--   **tracking.py**: Calculates positions for object and face tracking.
--   **translate_helper.py**: Provides translation services between various languages.
--   **tts.py**: Text-to-Speech system, supporting various TTS engines.
+- **desk_gui_app.py**: Ana GUI uygulaması, tüm arayüz ve kontrolleri içerir
+- **audio_manager.py**: Ses giriş/çıkış işlemlerini ve cihazlarını yönetir
+- **audio_thread_manager.py**: Ses işlemleri için çoklu thread yönetimi sağlar
+- **command_sender.py**: Robota komut göndermek için TCP protokolü kullanır
+- **command_helpers.py**: Komut oluşturma ve işleme yardımcı fonksiyonları
+- **face_detector.py**: Yüz tespiti ve tanıma işlemlerini gerçekleştirir
+- **gemini_helper.py**: Google Gemini AI API entegrasyonu sağlar
+- **motion_detector.py**: Kamera görüntüsünde hareket algılama yapar
+- **remote_video_stream.py**: Robottan gelen video akışını alır ve işler
+- **robot_data_listener.py**: Robot durum mesajlarını dinler ve işler
+- **speech_input.py**: Konuşma tanıma ve ses giriş işlemlerini yönetir
+- **tracking.py**: Nesne ve yüz takibi için konum hesaplamaları yapar
+- **translate_helper.py**: Çeşitli diller arasında çeviri işlemleri sağlar
+- **tts.py**: Metin-Konuşma (TTS) sistemi, çeşitli TTS motorlarını destekler
 
-### Image Processing Modules (vision/)
+### Görüntü İşleme Modülleri (vision/)
 
--   **age_emotion.py**: Module for detecting age and emotion from faces.
--   **finger_tracking.py**: Hand and finger gesture recognition module.
--   **object_detection.py**: Tensorflow-based object detection module.
--   **object_tracking.py**: Algorithm for tracking detected objects.
+- **age_emotion.py**: Yüzden yaş ve duygu tespiti modülü
+- **finger_tracking.py**: El ve parmak hareketi tanıma modülü
+- **object_detection.py**: Tensorflow tabanlı nesne tanıma modülü
+- **object_tracking.py**: Tespit edilen nesnelerin takibi için algoritma
 
-### GUI Elements (modules/gui/)
+### GUI Öğeleri (modules/gui/)
 
--   **desk_gui_app.py**: The main class and interface of the DeskGUI application.
+- **desk_gui_app.py**: DeskGUI uygulamasının ana sınıfı ve arayüzü
 
-### Launcher Files
+### Başlatıcı Dosyalar
 
--   **run_gui.py**: Launches only the GUI component.
--   **run_audio_server.py**: Launches only the audio server.
--   **run_all.py**: Launches both the GUI and the audio server together.
+- **run_gui.py**: Sadece GUI bileşenini başlatır
+- **run_audio_server.py**: Sadece ses sunucusunu başlatır 
+- **run_all.py**: Hem GUI hem ses sunucusunu birlikte başlatır
 
-## LLM (Language Model) Integration
+## LLM (Dil Modeli) Entegrasyonu
 
 ### Ollama
 
-SentryBOT is integrated with [Ollama](https://ollama.ai/) by default:
+SentryBOT varsayılan olarak [Ollama](https://ollama.ai/) ile entegre çalışır:
 
-1.  Install Ollama on your computer:
-    ```powershell
-    # Recommended installation for Windows
-    winget install Ollama.Ollama
-    ```
+1. Ollama'yı bilgisayarınıza kurun:
+   ```powershell
+   # Windows için tavsiye edilen kurulum
+   winget install Ollama.Ollama
+   ```
 
-2.  Download an Ollama model:
-    ```powershell
-    ollama pull [MODEL_NAME]
-    ```
-    or use a model of your choice (Llama3, Mistral, etc.).
+2. Ollama modelini indirin: 
+   ```powershell
+   ollama pull [MODEL_ADI]
+   ```
+   veya tercih ettiğiniz bir modeli kullanın (Llama3, Mistral, vb.)
 
-3.  Configure with `--ollama-url` and `--ollama-model` arguments:
-    ```powershell
-    python run_gui.py --ollama-url http://localhost:11434 --ollama-model [MODEL_NAME]
-    ```
+3. `--ollama-url` ve `--ollama-model` argümanlarıyla yapılandırın:
+   ```powershell
+   python run_gui.py --ollama-url http://localhost:11435 --ollama-model [MODEL_ADI]
+   ```
 
 ### Gemini AI
 
-To use Google Gemini API:
+Google Gemini API'sini kullanmak için:
 
-1.  Obtain an API key from [Google AI Studio](https://ai.google.dev/).
-2.  Access the Gemini settings menu from within the GUI.
-3.  Set your API key and other parameters (model, temperature, top-k, etc.).
+1. [Google AI Studio](https://ai.google.dev/)'dan API anahtarı alın
+2. GUI içinden Gemini ayarları menüsüne erişin
+3. API anahtarınızı ve diğer parametreleri ayarlayın (model, temperature, top-k, vb.)
 
-### API Response Handling
+### API Yanıt İşleme
 
-Special command markers can be used in LLM responses:
--   `!command:name` - Trigger direct robot commands.
--   `!animate:name` - Start animations.
--   `!eye:color` - Change LED eye color.
+LLM yanıtlarında özel komut işaretçileri kullanılabilir:
+- `!command:name` - Doğrudan robot komutları tetikleme
+- `!animate:name` - Animasyonları başlatma
+- `!eye:color` - LED göz rengini değiştirme
 
-## Advanced Features
+## Gelişmiş Özellikler
 
-### Face Recognition
+### Yüz Tanıma
 
-Store person's face encodings in the `encodings.pickle` file for face recognition:
+Yüz tanıma için kişilerin yüz kodlarını `encodings.pickle` dosyasında saklayın:
 
 ```python
 import face_recognition
 import pickle
 
-# Create and save face encodings
-known_face_encodings = []  # Face encodings created with face_recognition
-known_face_names = []      # Person names
+# Yüz kodlarını oluşturun ve kaydedin
+known_face_encodings = []  # face_recognition ile oluşturulan yüz kodları
+known_face_names = []      # Kişi adları
 data = {"encodings": known_face_encodings, "names": known_face_names}
 
 with open('encodings.pickle', 'wb') as f:
     pickle.dump(data, f)
 ```
 
-### Wake Word Detection
+### Wake Word Algılama
 
-Enable the "Wake Word" feature from within the GUI to give commands triggered by a voice phrase. The default trigger phrase is "Hey Sentrybot".
+GUI içinden "Wake Word" özelliğini etkinleştirerek ses tetikleme kelimesiyle komut verebilirsiniz. Varsayılan tetik ifadesi "Hey Sentrybot"tur.
 
-### Robot Animation Control
+### Robot Animasyon Kontrolü
 
-LED and servo animations on the robot can be controlled with these parameters:
+Robot üzerindeki LED ve servo animasyonları şu parametrelerle kontrol edilebilir:
 
 ```python
-# LED light animations
+# LED ışık animasyonları
 animations = ["RAINBOW", "WAVE", "FIRE", "GRADIENT", "RANDOM_BLINK", "ALTERNATING", "STACKED_BARS"]
 
-# Servo motor animations
+# Servo motor animasyonları
 servo_animations = ["HEAD_NOD", "LOOK_UP", "WAVE_HAND", "CENTER"]
 ```
 
-### Hardware Recommendation Specs
+### Donanım İstek Spesifikasyonları
 
-DeskGUI recommends the following minimum requirements for best performance:
--   **Processor:** Intel Core i5 (7th Gen or later) or AMD Ryzen 5
--   **RAM:** 8 GB (16 GB for heavy face recognition and image processing usage)
--   **GPU:** Integrated graphics card sufficient for basic use, NVIDIA GPU recommended for image processing.
--   **Operating System:** Windows 10/11, Ubuntu 20.04+, or MacOS 10.15+
--   **Connection:** Ethernet or strong WiFi connection (for video streaming).
+DeskGUI en iyi performans için aşağıdaki minimum gereksinimleri tavsiye eder:
+- **İşlemci:** Intel Core i5 (7. nesil ve üstü) veya AMD Ryzen 5
+- **RAM:** 8 GB (yüz tanıma ve görüntü işleme yoğun kullanım için 16 GB)
+- **GPU:** Basit kullanım için entegre grafik kartı yeterli, görüntü işleme için NVIDIA GPU önerilir
+- **İşletim Sistemi:** Windows 10/11, Ubuntu 20.04+ veya MacOS 10.15+
+- **Bağlantı:** Ethernet veya güçlü WiFi bağlantısı (video akışı için)
 
-## Robot Communication Protocol
+## Robot İletişim Protokolü
 
-DeskGUI sends JSON formatted messages to SentryBOT over TCP sockets to send commands and monitor robot status:
+DeskGUI, komut göndermek ve robot durumunu izlemek için SentryBOT'a TCP soketleri üzerinden JSON formatında mesajlar gönderir:
 
-### Basic Command Format
+### Temel Komut Formatı
 
 ```json
 {
-  "command": "COMMAND_NAME",
+  "command": "KOMUT_ADI",
   "params": {
-    "param1": "value1",
-    "param2": "value2"
+    "param1": "değer1",
+    "param2": "değer2"
   }
 }
 ```
 
-### Common Commands
+### Sık Kullanılan Komutlar
 
--   **animate**: Starts an animation on the robot.
-    ```json
-    {"command": "animate", "params": {"animation": "RAINBOW", "repeat": 1}}
-    ```
+- **animate**: Robot üzerinde animasyon başlatır
+  ```json
+  {"command": "animate", "params": {"animation": "RAINBOW", "repeat": 1}}
+  ```
 
--   **servo**: Controls servo motors.
-    ```json
-    {"command": "servo", "params": {"id": 0, "position": 90}}
-    ```
+- **servo**: Servo motorları kontrol eder
+  ```json
+  {"command": "servo", "params": {"id": 0, "position": 90}}
+  ```
 
--   **speech**: Triggers the robot to speak.
-    ```json
-    {"command": "speech", "params": {"text": "Hello world"}}
-    ```
+- **speech**: Robotun konuşmasını tetikler
+  ```json
+  {"command": "speech", "params": {"text": "Merhaba dünya"}}
+  ```
 
--   **eye_color**: Changes the robot's eye color.
-    ```json
-    {"command": "eye_color", "params": {"r": 255, "g": 0, "b": 0}}
-    ```
+- **eye_color**: Robot göz rengini değiştirir
+  ```json
+  {"command": "eye_color", "params": {"r": 255, "g": 0, "b": 0}}
+  ```
 
-## Config Files
+## Config Dosyaları
 
-DeskGUI uses the following config files:
+DeskGUI aşağıdaki config dosyalarını kullanır:
 
-1.  **personalities.json**: Defines robot personalities and LLM startup prompts.
-    ```json
-    {
-      "PersonalityName": {
-        "description": "Personality description",
-        "startup_prompt": "System prompt for LLM"
-      }
-    }
-    ```
+1. **personalities.json**: Robot kişiliklerini ve LLM başlatma komutlarını tanımlar
+   ```json
+   {
+     "KişilikAdı": {
+       "description": "Kişilik açıklaması",
+       "startup_prompt": "LLM için sistem komutu"
+     }
+   }
+   ```
 
-2.  **priority_animations.json**: Defines animations to run when specific persons are detected.
-    ```json
-    {
-      "PersonName": "ANIMATION_NAME"
-    }
-    ```
+2. **priority_animations.json**: Belirli kişiler algılandığında çalışacak animasyonları tanımlar
+   ```json
+   {
+     "KişiAdı": "ANİMASYON_ADI"
+   }
+   ```
 
-## Troubleshooting
+## Sorun Giderme
 
-### Connection Issues
+### Bağlantı Sorunları
 
-1.  **Robot cannot connect:**
-    -   Check that the robot IP address is correct.
-    -   Your computer and the robot must be on the same network.
-    -   Check firewall settings, ensure necessary ports are open.
+1. **Robot bağlanamıyor:**
+   - Robot IP adresinin doğru olduğunu kontrol edin
+   - Bilgisayarınız ile robot aynı ağda olmalıdır
+   - Firewall ayarlarını kontrol edin, gerekli portların açık olduğundan emin olun
 
-2.  **No video stream:**
-    -   The `--video-port` parameter must match the port on the robot side.
-    -   Ensure the OpenCV library is installed correctly.
+2. **Video akışı yok:**
+   - `--video-port` parametresi robot tarafındaki port ile eşleşmelidir
+   - OpenCV kütüphanesinin doğru kurulduğundan emin olun
 
-3.  **Audio issues:**
-    -   Use the `--list-devices` parameter to identify the correct microphone device.
-    -   Check that the Bluetooth server is running and accessible.
+3. **Ses sorunları:**
+   - `--list-devices` parametresini kullanarak doğru mikrofon cihazını tespit edin
+   - Bluetooth sunucusunun çalıştığını ve erişilebilir olduğunu kontrol edin
 
-### TTS Issues
+### TTS Sorunları
 
-1.  **Piper not working:**
-    -   It will default to PyTTSx3 if Piper setup is incorrect.
-    -   Check that your Piper models are in the correct directory.
+1. **Piper çalışmıyor:**
+   - Varsayılan olarak PyTTSx3'e geçiş yapılacaktır
+   - Piper modellerinizin doğru dizinde olduğunu kontrol edin
 
-2.  **XTTS API connection error:**
-    -   Check that the API server is running (port 5002).
-    -   Check that the voice sample WAV file is in the correct location.
+2. **XTTS API bağlantı hatası:**
+   - API sunucusunun çalıştığını kontrol edin (port 5002)
+   - Ses örneği WAV dosyasının doğru konumda olduğunu kontrol edin
 
-### Image Processing Issues
+### Görüntü İşleme Sorunları
 
-1.  **Face recognition not working:**
-    -   Check that the `encodings.pickle` file exists.
-    -   Ensure the face_recognition library is installed correctly.
-    -   Verify that `haarcascade_frontalface_default.xml` is in the directory.
+1. **Yüz tanıma çalışmıyor:**
+   - `encodings.pickle` dosyasının mevcut olduğunu kontrol edin
+   - face_recognition kütüphanesinin doğru kurulduğundan emin olun
+   - Dizinde `haarcascade_frontalface_default.xml` olduğunu doğrulayın
 
-2.  **Object recognition error:**
-    -   Check the `modules/vision/__init__.py` file for `MODELS_DIR` configuration path.
-    -   Verify that the YOLO model is in the correct location.
+2. **Nesne tanıma hatası:**
+   - `MODELS_DIR` dizin yolunu yapılandırma için `modules/vision/__init__.py` dosyasını kontrol edin
+   - YOLO modelinin doğru konumda olduğunu doğrulayın
 
-## Contribution and License
+## Katkı ve Lisans
 
-You can contribute by sending pull requests or opening issues. Please check the LICENSE file in the main directory for licensing information.
+Katkıda bulunmak için pull request gönderebilir veya issue açabilirsiniz. Lisans bilgisi için lütfen ana dizindeki LICENSE dosyasını inceleyin.
 
 ---
 
-For more information about SentryBOT and DeskGUI, please visit the [main project page](https://github.com/SentryCoderDev/SentryBOT).
+SentryBOT ve DeskGUI ile ilgili daha fazla bilgi için [ana proje sayfasını](https://github.com/) ziyaret edebilirsiniz.
