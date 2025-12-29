@@ -1,6 +1,6 @@
 PyQt5>=5.15.0
 opencv-python>=4.5.0
-numpy>=1.20.0
+numpy>=1.24.4,<2.0  # NumPy 2.x bazı ikili (onnxruntime, mediapipe) paketlerle uyumsuzluk çıkarıyor
 face_recognition>=1.3.0
 sounddevice>=0.4.0
 pyaudio>=0.2.11
@@ -9,7 +9,7 @@ gtts>=2.2.3
 requests>=2.25.0
 pypubsub>=4.0.3
 pygame>=2.0.0
-onnxruntime>=1.9.0
+onnxruntime>=1.15.0   # NumPy <2 ile test edilmiş kararlı sürümler (gerekirse güncelleyin)
 pydub>=0.25.1
 langdetect>=1.0.9
 pillow>=8.3.1
