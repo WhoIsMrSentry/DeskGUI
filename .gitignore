@@ -1,0 +1,5 @@
+__pycache__
+venv/
+*.pyc
+0.8.9
+temp_shape_predictor.dat
